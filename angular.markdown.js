@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 var MarkdownModule = angular.module('angular-markdown', []);
 
-MarkdownModule.directive('markdown', function () {
+MarkdownModule.directive('markdown', function ($compile) {
 	var converter = new Showdown.converter();
 
 	return {
@@ -52,6 +52,7 @@ MarkdownModule.directive('markdown', function () {
 			var render = function () {
 				var htmlText = "";
 				var val = "";
+                var compiledElement = null;
 
 				// Check to see if we're using a model.
 				if (attrs['ngModel']) {
@@ -68,7 +69,9 @@ MarkdownModule.directive('markdown', function () {
 
 				// Compile the markdown, and set it.
 				htmlText = converter.makeHtml(val);
-				element.html(htmlText);
+                compiledElement = $compile(htmlText)(scope);
+				element.html("");
+                element.append(compiledElement);
 
 				if (callPrettyPrint) {
 					prettyPrint();
